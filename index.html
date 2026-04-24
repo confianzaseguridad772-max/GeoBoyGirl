@@ -3,63 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoBoy - Registro Oficial</title>
+    <title>GeoBoy - Registro de Madres</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h2>GeoBoy</h2>
-            <p id="geoStatus">⚠️ Esperando ubicación GPS...</p>
+            <h1>GeoBoy</h1>
+            <div id="geoStatus" class="status-box waiting">
+                <i class="fas fa-satellite-dish fa-spin"></i>
+                <span id="geoText">Solicitando ubicación GPS obligatoria...</span>
+            </div>
         </header>
         
         <form id="mainForm">
-            <section>
-                <h3>👩‍👧‍👦 Datos de la Madre</h3>
-                <div class="field">
+            <section class="section-madre">
+                <h3><i class="fas fa-female"></i> Datos de la Madre</h3>
+                
+                <div class="field-group">
                     <label>N° DNI de la Madre:</label>
-                    <input type="number" name="dni_madre" placeholder="8 dígitos" required>
+                    <input type="number" name="dni_madre" placeholder="8 dígitos" required pattern="[0-9]{8}">
                 </div>
-                <div class="field">
+                
+                <div class="field-group">
                     <label>Nombre Completo:</label>
-                    <input type="text" name="nombre_madre" placeholder="Nombres y Apellidos" required>
+                    <input type="text" name="nombre_madre" placeholder="Ej. María García" required>
                 </div>
-                <div class="field">
+                
+                <div class="field-group">
                     <label>Estado Civil:</label>
                     <select name="estado_civil" required>
-                        <option value="" disabled selected>Seleccione...</option>
+                        <option value="" disabled selected>Selecciona una opción</option>
                         <option value="Soltero">Soltero/a</option>
                         <option value="Conviviente">Conviviente</option>
                         <option value="Casado">Casado/a</option>
                         <option value="Divorciado">Divorciado/a</option>
                     </select>
                 </div>
-                <div class="field">
+
+                <div class="field-group">
                     <label>Número de Celular:</label>
-                    <input type="tel" name="celular" placeholder="999888777" required>
+                    <input type="tel" name="celular" placeholder="999 888 777" required pattern="[0-9]{9}">
                 </div>
-                <div class="field">
-                    <label>Domicilio:</label>
-                    <input type="text" name="domicilio" placeholder="Dirección exacta" required>
+
+                <div class="field-group">
+                    <label>Domicilio de la vivienda:</label>
+                    <input type="text" name="domicilio" placeholder="Dirección o referencia" required>
                 </div>
             </section>
 
-            <section>
-                <h3>👶 Datos de los Hijos (< 5 años)</h3>
+            <section class="section-hijos">
+                <h3><i class="fas fa-baby"></i> Datos de los Hijos (< 5 años)</h3>
                 <div id="lista-hijos"></div>
-                <button type="button" class="btn-add" onclick="agregarHijo()">+ Añadir Hijo</button>
+                <button type="button" class="btn-add" onclick="agregarHijo()">
+                    <i class="fas fa-plus-circle"></i> Añadir Hijo
+                </button>
             </section>
 
-            <section>
-                <h3>🤝 Cuidadores</h3>
+            <section class="section-cuidadores">
+                <h3><i class="fas fa-hands-helping"></i> Cuidadores</h3>
                 <div id="lista-cuidadores"></div>
-                <button type="button" class="btn-add" onclick="agregarCuidador()">+ Añadir Cuidador</button>
+                <button type="button" class="btn-add" onclick="agregarCuidador()">
+                    <i class="fas fa-user-plus"></i> Añadir Cuidador
+                </button>
             </section>
 
             <input type="hidden" name="georeferencia" id="georeferencia">
-            <button type="submit" id="submitBtn" disabled>Esperando GPS...</button>
+            
+            <button type="submit" id="submitBtn" style="display:none;">
+                <i class="fas fa-cloud-upload-alt"></i> Registrar Información
+            </button>
         </form>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
