@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoBoy - Registro</title>
+    <title>GeoBoy - Registro Integral</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -12,68 +12,107 @@
         :root {
             --primary: #4a90e2;
             --grad-active: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --bg: #f0f4f8;
-            --radius: 16px;
+            --bg: #f4f7f9;
+            --radius: 20px;
+            --text: #2d3748;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--bg);
-            margin: 0; padding: 10px;
+            margin: 0; padding: 15px;
             display: flex; justify-content: center; min-height: 100vh;
         }
 
         .container {
-            background: #fff; width: 100%; max-width: 450px;
+            background: #fff; width: 100%; max-width: 480px;
             padding: 30px; border-radius: var(--radius);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-sizing: border-box;
         }
 
         h1 {
             background: var(--grad-active);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: center; margin: 0;
+            text-align: center; margin: 0; font-size: 2.2em; font-weight: 600;
         }
 
+        /* GPS Status */
         .status-box {
-            padding: 12px; border-radius: 12px; font-size: 0.85em;
-            text-align: center; margin: 15px 0; font-weight: 500;
+            padding: 15px; border-radius: 12px; font-size: 0.9em;
+            text-align: center; margin: 20px 0; font-weight: 500;
             display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.3s;
         }
+        .waiting { background: #fff1f2; color: #991b1b; border: 1px solid #fecaca; }
+        .ready { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 
-        .waiting { background: #fee2e2; color: #991b1b; }
-        .ready { background: #dcfce7; color: #166534; }
+        section { 
+            margin-bottom: 30px; 
+            padding: 15px;
+            background: #ffffff;
+            border-radius: 15px;
+        }
+        
+        h3 { 
+            font-size: 1.1em; color: var(--text); 
+            border-bottom: 2px solid #edf2f7; 
+            padding-bottom: 10px; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        h3 i { color: #764ba2; }
 
-        section { margin-bottom: 25px; }
-        h3 { font-size: 1.1em; color: #334155; border-left: 4px solid var(--primary); padding-left: 10px; }
-
-        .field { margin-bottom: 15px; }
-        label { display: block; font-size: 0.8em; font-weight: 600; color: #64748b; margin-bottom: 5px; }
+        .field { margin-bottom: 18px; }
+        label { display: block; font-size: 0.85em; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
         
         input, select {
-            width: 100%; padding: 12px; border: 2px solid #e2e8f0;
-            border-radius: 10px; box-sizing: border-box; font-size: 1em;
+            width: 100%; padding: 12px 15px; border: 2px solid #e2e8f0;
+            border-radius: 12px; box-sizing: border-box; font-size: 1em;
+            transition: 0.3s; background: #fcfdfe;
         }
 
+        input:focus, select:focus {
+            outline: none; border-color: #764ba2; box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
+        }
+
+        /* Diseño de Checkboxes para Cuidadores */
+        .checkbox-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            background: #f8fafc; padding: 15px; border-radius: 12px;
+        }
+        .checkbox-item {
+            display: flex; align-items: center; gap: 8px; font-size: 0.9em;
+            cursor: pointer; padding: 5px;
+        }
+        .checkbox-item input { width: 18px; height: 18px; accent-color: #764ba2; }
+
+        /* Grupos de Hijos */
         .entry-group {
-            background: #f8fafc; padding: 15px; border-radius: 10px;
-            border: 1px solid #e2e8f0; margin-bottom: 10px;
+            background: #f8fafc; padding: 15px; border-radius: 12px;
+            border: 1px solid #e2e8f0; border-left: 5px solid #764ba2;
+            margin-bottom: 15px; animation: fadeIn 0.4s ease;
         }
 
         .btn-add {
-            background: #fff; color: #764ba2; border: 2px solid #e2e8f0;
-            padding: 8px 15px; border-radius: 20px; cursor: pointer;
-            font-weight: 600; font-size: 0.8em; margin: 10px auto; display: block;
+            background: #fff; color: #764ba2; border: 2px solid #764ba2;
+            padding: 10px 20px; border-radius: 25px; cursor: pointer;
+            font-weight: 600; font-size: 0.85em; margin: 10px auto; display: block;
+            transition: 0.3s;
         }
+        .btn-add:hover { background: #f3f0ff; }
 
         #submitBtn {
             width: 100%; padding: 18px; background: var(--grad-active);
-            color: white; border: none; border-radius: var(--radius);
+            color: white; border: none; border-radius: 15px;
             font-size: 1.1em; font-weight: 600; cursor: pointer;
-            display: none; /* Oculto hasta que GPS funcione */
-            box-shadow: 0 8px 20px rgba(118, 75, 162, 0.3);
+            display: none; /* Se activa con el GPS */
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
+            transition: 0.3s;
         }
+        #submitBtn:hover { transform: translateY(-2px); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -89,14 +128,14 @@
 
     <form id="mainForm">
         <section>
-            <h3><i class="fas fa-female"></i> Datos de la Madre</h3>
+            <h3><i class="fas fa-id-card"></i> Datos de la Madre</h3>
             <div class="field">
                 <label>N° DNI de la Madre:</label>
-                <input type="number" name="dni_madre" required>
+                <input type="number" name="dni_madre" placeholder="Ingrese DNI" required>
             </div>
             <div class="field">
                 <label>Nombre Completo:</label>
-                <input type="text" name="nombre_madre" required>
+                <input type="text" name="nombre_madre" placeholder="Nombres y Apellidos" required>
             </div>
             <div class="field">
                 <label>Estado Civil:</label>
@@ -105,37 +144,48 @@
                     <option value="Soltera">Soltera</option>
                     <option value="Conviviente">Conviviente</option>
                     <option value="Casada">Casada</option>
+                    <option value="Divorciada">Divorciada</option>
                 </select>
             </div>
             <div class="field">
                 <label>Celular:</label>
-                <input type="tel" name="celular" required>
+                <input type="tel" name="celular" placeholder="999888777" required>
             </div>
             <div class="field">
                 <label>Domicilio:</label>
-                <input type="text" name="domicilio" required>
+                <input type="text" name="domicilio" placeholder="Dirección exacta" required>
             </div>
         </section>
 
         <section>
-            <h3><i class="fas fa-baby"></i> Datos de los Hijos</h3>
+            <h3><i class="fas fa-baby"></i> Datos de los Hijos (< 5 años)</h3>
             <div id="lista-hijos"></div>
-            <button type="button" class="btn-add" onclick="agregarHijo()">+ Añadir Hijo</button>
+            <button type="button" class="btn-add" onclick="agregarHijo()">
+                <i class="fas fa-plus"></i> Añadir Hijo
+            </button>
         </section>
 
         <section>
-            <h3><i class="fas fa-hands-helping"></i> Cuidadores</h3>
-            <div id="lista-cuidadores"></div>
-            <button type="button" class="btn-add" onclick="agregarCuidador()">+ Añadir Cuidador</button>
+            <h3><i class="fas fa-house-user"></i> ¿Quiénes viven con el menor?</h3>
+            <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="cuidadores[]" value="Madre"> Madre</label>
+                <label class="checkbox-item"><input type="checkbox" name="cuidadores[]" value="Padre"> Padre</label>
+                <label class="checkbox-item"><input type="checkbox" name="cuidadores[]" value="Abuelos"> Abuelos</label>
+                <label class="checkbox-item"><input type="checkbox" name="cuidadores[]" value="Tios"> Tíos</label>
+                <label class="checkbox-item"><input type="checkbox" name="cuidadores[]" value="Primos"> Primos</label>
+                <label class="checkbox-item"><input type="checkbox" name="cuidadores[]" value="Hermanos"> Hermanos</label>
+            </div>
         </section>
 
         <input type="hidden" name="georeferencia" id="georeferencia">
-        <button type="submit" id="submitBtn">Registrar Información</button>
+        <button type="submit" id="submitBtn">
+            <i class="fas fa-save"></i> Registrar Información
+        </button>
     </form>
 </div>
 
 <script>
-    // FORZAR GPS AL CARGAR
+    // 1. CONTROL DE GPS
     window.onload = function() {
         const geoStatus = document.getElementById('geoStatus');
         const geoText = document.getElementById('geoText');
@@ -145,58 +195,42 @@
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
-                    const lat = pos.coords.latitude;
-                    const lon = pos.coords.longitude;
-                    geoInput.value = lat + ", " + lon;
-                    
+                    geoInput.value = pos.coords.latitude + ", " + pos.coords.longitude;
                     geoStatus.className = "status-box ready";
-                    geoText.innerText = "📍 Ubicación detectada";
-                    btn.style.display = "block"; // Mostrar botón
+                    geoStatus.innerHTML = '<i class="fas fa-check-circle"></i> <span>Ubicación capturada</span>';
+                    btn.style.display = "block"; 
                 },
                 (err) => {
-                    geoText.innerText = "⚠️ Error: Active su GPS y refresque";
-                    alert("Por favor active la ubicación en su celular.");
+                    geoText.innerText = "⚠️ GPS bloqueado. Actívelo y recargue.";
+                    alert("Es OBLIGATORIO activar el GPS para registrar.");
                 },
-                { enableHighAccuracy: true, timeout: 10000 }
+                { enableHighAccuracy: true, timeout: 15000 }
             );
         }
     };
 
+    // 2. FUNCIÓN AÑADIR HIJOS
     function agregarHijo() {
         const div = document.createElement('div');
         div.className = 'entry-group';
         div.innerHTML = `
-            <label>DNI Hijo:</label><input type="number" name="hijo_dni[]" required>
-            <label>Nombre:</label><input type="text" name="hijo_nombre[]" required>
-            <label>Nacimiento:</label><input type="date" name="hijo_fecha[]" required>
+            <label>DNI del Hijo:</label><input type="number" name="hijo_dni[]" required>
+            <label>Nombre Completo:</label><input type="text" name="hijo_nombre[]" required>
+            <label>Fecha de Nacimiento:</label><input type="date" name="hijo_fecha[]" required>
         `;
         document.getElementById('lista-hijos').appendChild(div);
     }
 
-    function agregarCuidador() {
-        const div = document.createElement('div');
-        div.className = 'entry-group';
-        div.innerHTML = `
-            <label>Parentesco:</label>
-            <select name="cuidadores[]" required>
-                <option value="Madre">Madre</option>
-                <option value="Padre">Padre</option>
-                <option value="Abuelos">Abuelos</option>
-                <option value="Tios">Tíos</option>
-                <option value="Hermanos">Hermanos</option>
-            </select>
-        `;
-        document.getElementById('lista-cuidadores').appendChild(div);
-    }
-
+    // 3. ENVÍO DE DATOS
     document.getElementById('mainForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        btn.innerText = "Enviando...";
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
         const formData = new FormData(this);
         const data = {};
+        
         formData.forEach((value, key) => {
             if (key.includes('[]')) {
                 if (!data[key]) data[key] = [];
@@ -206,17 +240,21 @@
             }
         });
 
-        // REEMPLAZA ESTA URL CON TU WEB APP DE GOOGLE
-        const URL = "https://script.google.com/macros/s/AKfycbyFBJeSC-FduYSBNY2zcdgEOOv7erSU1w0ENotDp_r1D77DjVdzhdJyQOQX7uHOESAE/exec";
+        // URL DE TU GOOGLE SCRIPT (Asegúrate que sea la última versión implementada)
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw6D6nTyINelYh58rocW1fy77qy272IhnYJ8FwvsuJv7lBH4o2RPSR4rbPwy8lvqHKd/exec";
 
-        fetch(URL, {
+        fetch(URL_SCRIPT, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify(data)
         }).then(() => {
-            alert("¡Guardado correctamente!");
+            alert("¡Registro guardado con éxito!");
             location.reload();
-        }).catch(() => alert("Error al conectar con Excel"));
+        }).catch(() => {
+            alert("Error al conectar. Verifique su internet.");
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Reintentar';
+        });
     });
 </script>
 
