@@ -1,9 +1,18 @@
-// Obtener Georeferencia al cargar
+// Obtener geolocalización al cargar el formulario
 window.onload = () => {
+    const geoStatus = document.getElementById('geoStatus');
+    const geoInput = document.getElementById('georeferencia');
+
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            document.getElementById('georeferencia').value = `${pos.coords.latitude}, ${pos.coords.longitude}`;
-        });
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                geoInput.value = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+                geoStatus.innerText = "📍 Ubicación capturada";
+                geoStatus.style.color = "#059669";
+            },
+            () => { geoStatus.innerText = "⚠️ Activa el GPS para registrar la ubicación"; },
+            { enableHighAccuracy: true }
+        );
     }
 };
 
@@ -11,8 +20,8 @@ function agregarHijo() {
     const div = document.createElement('div');
     div.className = 'entry-group';
     div.innerHTML = `
-        <label>DNI:</label><input type="number" name="hijo_dni[]" required>
-        <label>Nombre:</label><input type="text" name="hijo_nombre[]" required>
+        <label>DNI del Hijo:</label><input type="number" name="hijo_dni[]" required>
+        <label>Nombre del Hijo:</label><input type="text" name="hijo_nombre[]" required>
         <label>Fecha de Nacimiento:</label><input type="date" name="hijo_fecha[]" required>
     `;
     document.getElementById('lista-hijos').appendChild(div);
@@ -23,7 +32,8 @@ function agregarCuidador() {
     input.type = 'text';
     input.name = 'cuidadores[]';
     input.placeholder = 'Nombre del cuidador';
-    input.style.marginBottom = '5px';
+    input.style.marginBottom = '10px';
+    input.required = true;
     document.getElementById('lista-cuidadores').appendChild(input);
 }
 
@@ -35,21 +45,29 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
 
     const formData = new FormData(this);
     const data = {};
+    
+    // Procesar campos simples y arrays
     formData.forEach((value, key) => {
-        if (!data[key]) { data[key] = []; }
-        data[key].push(value);
+        if (key.includes('[]')) {
+            if (!data[key]) data[key] = [];
+            data[key].push(value);
+        } else {
+            data[key] = value;
+        }
     });
 
-    // Envío a Google Apps Script
-    fetch('https://script.google.com/macros/s/AKfycbzEZiWeRvU_lJCI07Hij-0mtC-fYY8xALU2sg6ACEtdy1vKvHhyQigzpSaFP5kLSfnE/exec', {
+    // REEMPLAZA ESTO CON LA URL DE TU SCRIPT DESPLEGADO
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFBJeSC-FduYSBNY2zcdgEOOv7erSU1w0ENotDp_r1D77DjVdzhdJyQOQX7uHOESAE/exec';
+
+    fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // Importante para evitar bloqueos CORS simples
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
+        mode: 'no-cors',
+        body: JSON.stringify(data)
     }).then(() => {
-        alert("Datos enviados correctamente.");
-        this.reset();
+        alert("¡Registro guardado correctamente!");
+        location.reload();
+    }).catch(() => {
+        alert("Error al enviar.");
         btn.disabled = false;
-        btn.innerText = "Enviar Información";
-    }).catch(err => alert("Error: " + err));
+    });
 });
