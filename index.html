@@ -7,6 +7,7 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -52,6 +53,7 @@
             padding: 15px;
             background: #ffffff;
             border-radius: 15px;
+            border: 1px solid #f1f5f9;
         }
         
         h3 { 
@@ -89,6 +91,7 @@
             background: #f8fafc; padding: 15px; border-radius: 12px;
             border: 1px solid #e2e8f0; border-left: 5px solid #764ba2;
             margin-bottom: 15px; animation: fadeIn 0.4s ease;
+            position: relative;
         }
 
         .btn-add {
@@ -127,8 +130,8 @@
         <section>
             <h3><i class="fas fa-id-card"></i> Datos de la Madre</h3>
             <div class="field">
-                <label>N° DNI de la Madre:</label>
-                <input type="number" name="dni_madre" placeholder="Ingrese DNI" required>
+                <label>N° DNI Madre (8 dígitos):</label>
+                <input type="text" name="dni_madre" pattern="\d{8}" maxlength="8" placeholder="Ej. 12345678" required title="Debe contener 8 números">
             </div>
             <div class="field">
                 <label>Nombre Completo:</label>
@@ -152,10 +155,18 @@
                 <label>Domicilio:</label>
                 <input type="text" name="domicilio" placeholder="Dirección exacta" required>
             </div>
+            <div class="field">
+                <label>Tipo de Vivienda:</label>
+                <select name="tipo_vivienda" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                    <option value="Propia">Propia</option>
+                    <option value="Alquilada">Alquilada</option>
+                </select>
+            </div>
         </section>
 
         <section>
-            <h3><i class="fas fa-baby"></i> Datos de los Hijos (< 5 años)</h3>
+            <h3><i class="fas fa-baby"></i> Datos de los Hijos</h3>
             <div id="lista-hijos"></div>
             <button type="button" class="btn-add" onclick="agregarHijo()">
                 <i class="fas fa-plus"></i> Añadir Hijo
@@ -176,15 +187,15 @@
 
         <input type="hidden" name="georeferencia" id="georeferencia">
         <button type="submit" id="submitBtn">
-            <i class="fas fa-save"></i> Registrar Información
+            <i class="fas fa-save"></i> Finalizar Registro
         </button>
     </form>
 </div>
 
 <script>
+    // 1. MANEJO DE GPS
     window.onload = function() {
         const geoStatus = document.getElementById('geoStatus');
-        const geoText = document.getElementById('geoText');
         const btn = document.getElementById('submitBtn');
         const geoInput = document.getElementById('georeferencia');
 
@@ -197,36 +208,44 @@
                     btn.style.display = "block"; 
                 },
                 (err) => {
-                    geoText.innerText = "⚠️ GPS bloqueado. Actívelo y recargue.";
-                    alert("Es OBLIGATORIO activar el GPS para registrar.");
+                    Swal.fire('GPS Necesario', 'Por favor activa tu GPS y recarga la página para continuar.', 'warning');
                 },
                 { enableHighAccuracy: true, timeout: 15000 }
             );
         }
     };
 
+    // 2. AGREGAR HIJOS (Mejorado con validación de DNI)
     function agregarHijo() {
         const div = document.createElement('div');
         div.className = 'entry-group';
         div.innerHTML = `
-            <label>DNI del Hijo:</label><input type="number" name="hijo_dni[]" required>
-            <label>Nombre Completo:</label><input type="text" name="hijo_nombre[]" required>
-            <label>Fecha de Nacimiento:</label><input type="date" name="hijo_fecha[]" required>
-            <button type="button" style="background:none;border:none;color:#e74c3c;font-size:0.8em;cursor:pointer;margin-top:5px;" onclick="this.parentElement.remove()">Eliminar</button>
+            <label>DNI del Hijo (8 dígitos):</label>
+            <input type="text" name="hijo_dni[]" pattern="\\d{8}" maxlength="8" placeholder="Ej. 77665544" required>
+            <label>Nombre Completo:</label>
+            <input type="text" name="hijo_nombre[]" required>
+            <label>Fecha de Nacimiento:</label>
+            <input type="date" name="hijo_fecha[]" required>
+            <i class="fas fa-trash-alt" style="position:absolute; top:15px; right:15px; color:#e74c3c; cursor:pointer;" onclick="this.parentElement.remove()"></i>
         `;
         document.getElementById('lista-hijos').appendChild(div);
     }
 
+    // 3. ENVÍO DE DATOS
     document.getElementById('mainForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        
+        // Mensaje amigable de "Enviando"
+        Swal.fire({
+            title: 'Procesando registro',
+            text: 'Verificando datos...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
 
         const formData = new FormData(this);
         const data = {};
         
-        // Procesamiento limpio de arrays y campos simples
         for (let [key, value] of formData.entries()) {
             if (key.endsWith('[]')) {
                 if (!data[key]) data[key] = [];
@@ -236,19 +255,22 @@
             }
         }
 
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw6D6nTyINelYh58rocW1fy77qy272IhnYJ8FwvsuJv7lBH4o2RPSR4rbPwy8lvqHKd/exec";
+        // URL de tu Script de Google (Mantén la tuya)
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwq1jyV3Mq_Et7uzUh1Ahd8VUl5LUwHlYu_HuNl-lm_eYEEJ9fzs4Ik5ynmTgYcudbv/exec";
 
         fetch(URL_SCRIPT, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify(data)
         }).then(() => {
-            alert("¡Registro guardado con éxito!");
-            location.reload();
+            Swal.fire({
+                icon: 'success',
+                title: '¡Buen trabajo!',
+                text: 'La información se ha registrado correctamente.',
+                confirmButtonColor: '#764ba2'
+            }).then(() => location.reload());
         }).catch(() => {
-            alert("Error al conectar. Verifique su internet.");
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-save"></i> Reintentar';
+            Swal.fire('Error', 'No se pudo guardar la información. Revisa tu internet.', 'error');
         });
     });
 </script>
