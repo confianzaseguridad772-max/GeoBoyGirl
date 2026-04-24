@@ -3,47 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GeoBoy - Registro de Madres</title>
+    <title>GeoBoy - Registro Oficial</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h2>GeoBoy</h2>
-            <p id="geoStatus">📍 Solicitando acceso a ubicación...</p>
+            <p id="geoStatus">⚠️ Esperando ubicación GPS...</p>
         </header>
         
         <form id="mainForm">
             <section>
                 <h3>👩‍👧‍👦 Datos de la Madre</h3>
                 <div class="field">
-                    <label>Nombre Completo:</label>
-                    <input type="text" name="nombre_madre" placeholder="Ej. María García" required>
+                    <label>N° DNI de la Madre:</label>
+                    <input type="number" name="dni_madre" placeholder="8 dígitos" required>
                 </div>
-                
+                <div class="field">
+                    <label>Nombre Completo:</label>
+                    <input type="text" name="nombre_madre" placeholder="Nombres y Apellidos" required>
+                </div>
                 <div class="field">
                     <label>Estado Civil:</label>
                     <select name="estado_civil" required>
-                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="" disabled selected>Seleccione...</option>
                         <option value="Soltero">Soltero/a</option>
                         <option value="Conviviente">Conviviente</option>
                         <option value="Casado">Casado/a</option>
                         <option value="Divorciado">Divorciado/a</option>
                     </select>
                 </div>
-
                 <div class="field">
                     <label>Número de Celular:</label>
-                    <input type="tel" name="celular" placeholder="999888777" pattern="[0-9]{9}" required>
+                    <input type="tel" name="celular" placeholder="999888777" required>
                 </div>
-
                 <div class="field">
-                    <label>Domicilio de la vivienda:</label>
-                    <input type="text" name="domicilio" placeholder="Dirección o referencia" required>
+                    <label>Domicilio:</label>
+                    <input type="text" name="domicilio" placeholder="Dirección exacta" required>
                 </div>
             </section>
 
-            <section id="hijos-section">
+            <section>
                 <h3>👶 Datos de los Hijos (< 5 años)</h3>
                 <div id="lista-hijos"></div>
                 <button type="button" class="btn-add" onclick="agregarHijo()">+ Añadir Hijo</button>
@@ -56,8 +57,7 @@
             </section>
 
             <input type="hidden" name="georeferencia" id="georeferencia">
-            
-            <button type="submit" id="submitBtn">Registrar Información</button>
+            <button type="submit" id="submitBtn" disabled>Esperando GPS...</button>
         </form>
     </div>
     <script src="script.js"></script>
