@@ -38,7 +38,6 @@
             text-align: center; margin: 0; font-size: 2.2em; font-weight: 600;
         }
 
-        /* GPS Status */
         .status-box {
             padding: 15px; border-radius: 12px; font-size: 0.9em;
             text-align: center; margin: 20px 0; font-weight: 500;
@@ -76,7 +75,6 @@
             outline: none; border-color: #764ba2; box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
         }
 
-        /* Diseño de Checkboxes para Cuidadores */
         .checkbox-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
             background: #f8fafc; padding: 15px; border-radius: 12px;
@@ -87,7 +85,6 @@
         }
         .checkbox-item input { width: 18px; height: 18px; accent-color: #764ba2; }
 
-        /* Grupos de Hijos */
         .entry-group {
             background: #f8fafc; padding: 15px; border-radius: 12px;
             border: 1px solid #e2e8f0; border-left: 5px solid #764ba2;
@@ -106,7 +103,7 @@
             width: 100%; padding: 18px; background: var(--grad-active);
             color: white; border: none; border-radius: 15px;
             font-size: 1.1em; font-weight: 600; cursor: pointer;
-            display: none; /* Se activa con el GPS */
+            display: none; 
             box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
             transition: 0.3s;
         }
@@ -185,7 +182,6 @@
 </div>
 
 <script>
-    // 1. CONTROL DE GPS
     window.onload = function() {
         const geoStatus = document.getElementById('geoStatus');
         const geoText = document.getElementById('geoText');
@@ -209,7 +205,6 @@
         }
     };
 
-    // 2. FUNCIÓN AÑADIR HIJOS
     function agregarHijo() {
         const div = document.createElement('div');
         div.className = 'entry-group';
@@ -217,11 +212,11 @@
             <label>DNI del Hijo:</label><input type="number" name="hijo_dni[]" required>
             <label>Nombre Completo:</label><input type="text" name="hijo_nombre[]" required>
             <label>Fecha de Nacimiento:</label><input type="date" name="hijo_fecha[]" required>
+            <button type="button" style="background:none;border:none;color:#e74c3c;font-size:0.8em;cursor:pointer;margin-top:5px;" onclick="this.parentElement.remove()">Eliminar</button>
         `;
         document.getElementById('lista-hijos').appendChild(div);
     }
 
-    // 3. ENVÍO DE DATOS
     document.getElementById('mainForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
@@ -231,16 +226,16 @@
         const formData = new FormData(this);
         const data = {};
         
-        formData.forEach((value, key) => {
-            if (key.includes('[]')) {
+        // Procesamiento limpio de arrays y campos simples
+        for (let [key, value] of formData.entries()) {
+            if (key.endsWith('[]')) {
                 if (!data[key]) data[key] = [];
                 data[key].push(value);
             } else {
                 data[key] = value;
             }
-        });
+        }
 
-        // URL DE TU GOOGLE SCRIPT (Asegúrate que sea la última versión implementada)
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw6D6nTyINelYh58rocW1fy77qy272IhnYJ8FwvsuJv7lBH4o2RPSR4rbPwy8lvqHKd/exec";
 
         fetch(URL_SCRIPT, {
