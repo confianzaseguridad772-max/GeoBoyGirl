@@ -4,29 +4,42 @@ window.onload = () => {
 
 function solicitarUbicacion() {
     const geoStatus = document.getElementById('geoStatus');
+    const geoText = document.getElementById('geoText');
+    const geoIcon = geoStatus.querySelector('i');
     const geoInput = document.getElementById('georeferencia');
     const btn = document.getElementById('submitBtn');
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             pos => {
-                // Guardar coordenadas
+                // 1. Guardar coordenadas
                 geoInput.value = `${pos.coords.latitude}, ${pos.coords.longitude}`;
                 
-                // Actualizar interfaz visual
-                geoStatus.innerText = "📍 Ubicación capturada correctamente";
-                geoStatus.classList.add('ready'); // Activa el estilo verde del CSS
+                // 2. Actualizar interfaz visual (Verde)
+                geoStatus.classList.remove('waiting');
+                geoStatus.classList.add('ready');
+                geoIcon.classList.remove('fa-satellite-dish', 'fa-spin');
+                geoIcon.classList.add('fa-check-circle');
+                geoText.innerText = "Ubicación capturada correctamente";
                 
-                // Habilitar el formulario
+                // 3. MOSTRAR EL BOTÓN DE ENVÍO
+                btn.style.display = 'flex'; // Cambia de hidden a visible
                 btn.disabled = false;
-                btn.innerText = "Registrar Información";
             },
             (error) => {
-                console.error(error);
-                geoStatus.innerText = "⚠️ Error: Debe activar el GPS y permitir el acceso.";
+                console.error("Error GPS:", error);
+                
+                // Interfaz de error (Rojo intenso)
                 geoStatus.style.background = "#fee2e2";
-                geoStatus.style.color = "#b91c1c";
-                alert("Para registrar los datos, es obligatorio activar la ubicación de su celular.");
+                geoStatus.style.color = "#991b1b";
+                geoIcon.classList.remove('fa-satellite-dish', 'fa-spin');
+                geoIcon.classList.add('fa-exclamation-triangle');
+                geoText.innerText = "ERROR: Debe activar el GPS de su celular.";
+                
+                alert("⚠️ ATENCIÓN: El GPS es obligatorio. Por favor, actívelo y recargue la página.");
+                
+                // Mantenemos el botón oculto
+                btn.style.display = 'none'; 
             },
             { 
                 enableHighAccuracy: true,
@@ -35,19 +48,20 @@ function solicitarUbicacion() {
             }
         );
     } else {
-        geoStatus.innerText = "❌ Su navegador no soporta geolocalización.";
+        geoText.innerText = "❌ Navegador no compatible con GPS.";
     }
 }
 
+// Las funciones de añadir hijo/cuidador ya funcionan con el nuevo CSS
 function agregarHijo() {
     const contenedorHijos = document.getElementById('lista-hijos');
     const div = document.createElement('div');
     div.className = 'entry-group';
     div.innerHTML = `
         <label>DNI del Hijo:</label>
-        <input type="number" name="hijo_dni[]" placeholder="DNI" required>
+        <input type="number" name="hijo_dni[]" placeholder="DNI del menor" required>
         <label>Nombre del Hijo:</label>
-        <input type="text" name="hijo_nombre[]" placeholder="Nombres" required>
+        <input type="text" name="hijo_nombre[]" placeholder="Nombres completos" required>
         <label>Fecha de Nacimiento:</label>
         <input type="date" name="hijo_fecha[]" required>
     `;
@@ -77,20 +91,21 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     
-    // Validación de seguridad extra por si el GPS falló
+    // Validación final de seguridad
     const geoValue = document.getElementById('georeferencia').value;
     if (!geoValue) {
-        alert("No se ha capturado la ubicación. Por favor, recargue la página.");
+        alert("No se ha capturado la ubicación GPS. No se puede guardar.");
+        location.reload(); // Recarga para forzar el GPS
         return;
     }
 
     btn.disabled = true;
-    btn.innerText = "Enviando datos al Excel...";
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Registrando en Excel...`;
 
     const formData = new FormData(this);
     const data = {};
     
-    // Procesar campos simples y arrays para que Google Apps Script los entienda
+    // Procesar campos simples y arrays para Google Apps Script
     formData.forEach((value, key) => {
         if (key.includes('[]')) {
             if (!data[key]) data[key] = [];
@@ -100,20 +115,20 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
         }
     });
 
-    // URL de tu Google Apps Script (Ya actualizada)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDG4zDaqV7FccbgPysakIhuKfYtQolA-hwfg4whV93G9xFz252vGrCi9QskfzP5h2B/exec';
+    // Tu URL actual (Asegúrate de que sea la URL de la IMPLEMENTACIÓN ACTUALIZADA)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNtVxD-aceLdrlTbyPyasko9UuH38Z7Y8C2JVxAElCT7o4cbR0KunaP7zgsesUMqsW/exec';
 
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // Evita problemas de CORS con Google Scripts
+        mode: 'no-cors', // Necesario para Google Scripts
         body: JSON.stringify(data)
     }).then(() => {
         alert("¡Registro guardado exitosamente en GeoBoy!");
-        location.reload(); // Recarga para limpiar y preparar nuevo registro
+        location.reload(); 
     }).catch((error) => {
         console.error('Error:', error);
         alert("Hubo un error al enviar. Verifique su conexión a internet.");
         btn.disabled = false;
-        btn.innerText = "Reintentar Registro";
+        btn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> Reintentar Registro`;
     });
 });
