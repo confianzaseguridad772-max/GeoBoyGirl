@@ -101,7 +101,7 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
     });
 
     // URL de tu Google Apps Script (Ya actualizada)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFBJeSC-FduYSBNY2zcdgEOOv7erSU1w0ENotDp_r1D77DjVdzhdJyQOQX7uHOESAE/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzDG4zDaqV7FccbgPysakIhuKfYtQolA-hwfg4whV93G9xFz252vGrCi9QskfzP5h2B/exec';
 
     fetch(SCRIPT_URL, {
         method: 'POST',
