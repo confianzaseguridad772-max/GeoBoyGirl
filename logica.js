@@ -41,7 +41,7 @@ document.getElementById('mainForm').addEventListener('submit', function(e) {
     });
 
     // Envío a Google Apps Script
-    fetch('TU_URL_DE_APPS_SCRIPT', {
+    fetch('https://script.google.com/macros/s/AKfycbzEZiWeRvU_lJCI07Hij-0mtC-fYY8xALU2sg6ACEtdy1vKvHhyQigzpSaFP5kLSfnE/exec', {
         method: 'POST',
         mode: 'no-cors', // Importante para evitar bloqueos CORS simples
         body: JSON.stringify(data),
