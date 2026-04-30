@@ -16,8 +16,6 @@
             --bg: #f4f7f9;
             --radius: 20px;
             --text: #2d3748;
-            --danger: #ef4444;
-            --success: #22c55e;
         }
 
         body {
@@ -96,12 +94,6 @@
             position: relative;
         }
 
-        /* Estilo para sección de anemia dentro del hijo */
-        .anemia-box {
-            margin-top: 15px; padding: 12px; background: #fff1f2; 
-            border-radius: 10px; border: 1px solid #fecaca;
-        }
-
         .btn-add {
             background: #fff; color: #764ba2; border: 2px solid #764ba2;
             padding: 10px 20px; border-radius: 25px; cursor: pointer;
@@ -157,8 +149,8 @@
                 </select>
             </div>
             <div class="field">
-                <label>Celular (WhatsApp/Llamadas):</label>
-                <input type="tel" name="celular" pattern="\d{9}" maxlength="9" placeholder="999888777" required>
+                <label>Celular:</label>
+                <input type="tel" name="celular" placeholder="999888777" required>
             </div>
             <div class="field">
                 <label>Domicilio:</label>
@@ -238,7 +230,7 @@
         }
     };
 
-    // 2. LÓGICA DE AGREGAR HIJOS CON SECCIÓN DE ANEMIA
+    // 2. LÓGICA DE AGREGAR HIJOS
     function agregarHijo() {
         const div = document.createElement('div');
         div.className = 'entry-group';
@@ -248,43 +240,23 @@
                 <input type="text" name="hijo_dni[]" pattern="\\d{8}" maxlength="8" placeholder="Ej. 77665544" required>
             </div>
             <div class="field">
-                <label>Nombre Completo del Niño:</label>
+                <label>Nombre Completo:</label>
                 <input type="text" name="hijo_nombre[]" required>
             </div>
             <div class="field">
-                <label>Fecha de Nacimiento:</label>
-                <input type="text" name="hijo_fecha[]" placeholder="DD/MM/AAAA" maxlength="10" 
-                       pattern="^([0-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/([0-9]{4})$" 
-                       oninput="mascaraFecha(this)" inputmode="numeric" required>
+                <label>Fecha de Nacimiento (DD/MM/AAAA):</label>
+                <input type="text" 
+                       name="hijo_fecha[]" 
+                       placeholder="DD/MM/AAAA" 
+                       maxlength="10"
+                       pattern="^([0-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/([0-9]{4})$"
+                       oninput="mascaraFecha(this)"
+                       inputmode="numeric"
+                       required>
             </div>
-            
-            <div class="anemia-box">
-                <label style="color:#991b1b"><i class="fas fa-tint"></i> ¿Tiene Anemia?</label>
-                <select name="tiene_anemia[]" onchange="toggleAnemiaDates(this)">
-                    <option value="No">No</option>
-                    <option value="Si">Sí</option>
-                </select>
-                
-                <div class="anemia-dates" style="display:none; margin-top:10px;">
-                    <label>Fecha Inicio Anemia:</label>
-                    <input type="text" name="fecha_inicio_anemia[]" placeholder="DD/MM/AAAA" 
-                           maxlength="10" oninput="mascaraFecha(this); calcularAlta(this)" inputmode="numeric">
-                    
-                    <label style="margin-top:8px;">Fecha de Alta (7 meses):</label>
-                    <input type="text" name="fecha_alta_anemia[]" readonly style="background:#f1f5f9; color:#166534; font-weight:600;">
-                </div>
-            </div>
-
             <i class="fas fa-trash-alt" style="position:absolute; top:15px; right:15px; color:#e74c3c; cursor:pointer;" onclick="this.parentElement.remove()"></i>
         `;
         document.getElementById('lista-hijos').appendChild(div);
-    }
-
-    function toggleAnemiaDates(select) {
-        const datesDiv = select.nextElementSibling;
-        datesDiv.style.display = (select.value === "Si") ? "block" : "none";
-        const inputs = datesDiv.querySelectorAll('input');
-        inputs.forEach(i => i.required = (select.value === "Si"));
     }
 
     function mascaraFecha(input) {
@@ -298,45 +270,25 @@
         }
     }
 
-    // Calcula automáticamente la fecha de alta sumando 7 meses
-    function calcularAlta(input) {
-        if (input.value.length === 10) {
-            const parts = input.value.split('/');
-            const day = parseInt(parts[0]);
-            const month = parseInt(parts[1]) - 1;
-            const year = parseInt(parts[2]);
-            
-            const fechaInicio = new Date(year, month, day);
-            if (!isNaN(fechaInicio.getTime())) {
-                const fechaAlta = new Date(fechaInicio);
-                fechaAlta.setMonth(fechaAlta.getMonth() + 7);
-                
-                const d = String(fechaAlta.getDate()).padStart(2, '0');
-                const m = String(fechaAlta.getMonth() + 1).padStart(2, '0');
-                const y = fechaAlta.getFullYear();
-                
-                const altaInput = input.parentElement.querySelector('input[name="fecha_alta_anemia[]"]');
-                altaInput.value = `${d}/${m}/${y}`;
-            }
-        }
-    }
-
     // 3. ENVÍO DE DATOS
     document.getElementById('mainForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Validación: Cuidadores
         const cuidadores = document.querySelectorAll('input[name="cuidadores[]"]:checked');
         if (cuidadores.length === 0) {
             Swal.fire('Atención', 'Selecciona quiénes viven con el menor.', 'warning');
             return;
         }
 
+        // Validación: Programas Sociales
         const programas = document.querySelectorAll('input[name="programas[]"]:checked');
         if (programas.length === 0) {
-            Swal.fire('Atención', 'Selecciona al menos una opción en Programa Social.', 'warning');
+            Swal.fire('Atención', 'Selecciona al menos una opción en Programa Social (o marca "Ninguno").', 'warning');
             return;
         }
 
+        // Validación: Al menos un hijo
         const hijos = document.querySelectorAll('input[name="hijo_dni[]"]');
         if (hijos.length === 0) {
             Swal.fire('Atención', 'Debes añadir al menos un hijo.', 'warning');
@@ -345,7 +297,7 @@
 
         Swal.fire({
             title: 'Guardando...',
-            text: 'Enviando datos al sistema de Castillo Grande',
+            text: 'Enviando datos a la base de datos',
             allowOutsideClick: false,
             didOpen: () => { Swal.showLoading(); }
         });
@@ -362,6 +314,7 @@
             }
         }
 
+        // URL DE TU SCRIPT
         const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzWdY-VvbVnu64mD2RJyjkZnQOK2fvZKAdR120gPHZhBMOm_bwI8V7vCvVb34qJYiNm/exec"; 
 
         fetch(URL_SCRIPT, {
@@ -371,8 +324,8 @@
         }).then(() => {
             Swal.fire({
                 icon: 'success',
-                title: 'Registro Exitoso',
-                text: 'Los datos se sincronizaron con el mapa.',
+                title: 'Registrado',
+                text: 'Los datos se guardaron correctamente.',
                 confirmButtonColor: '#764ba2'
             }).then(() => location.reload());
         }).catch(() => {
