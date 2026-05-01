@@ -129,13 +129,13 @@
     <form id="mainForm">
         <!-- SECCIÓN 1: DATOS DE LA MADRE -->
         <section>
-            <h3><i class="fas fa-id-card"></i> Datos de la Madre</h3>
+            <h3><i class="fas fa-id-card"></i> Datos de Mamá</h3>
             <div class="field">
-                <label>N° DNI Madre (8 dígitos):</label>
+                <label>N° DNI Madre:</label>
                 <input type="text" name="dni_madre" pattern="\d{8}" maxlength="8" placeholder="Ej. 12345678" required>
             </div>
             <div class="field">
-                <label>Nombre Completo:</label>
+                <label>Nombre y Apellidos:</label>
                 <input type="text" name="nombre_madre" placeholder="Nombres y Apellidos" required>
             </div>
             <div class="field">
@@ -169,7 +169,7 @@
 
         <!-- SECCIÓN 2: DATOS DE LOS HIJOS (DINÁMICO) -->
         <section>
-            <h3><i class="fas fa-baby"></i> Datos de los Hijos</h3>
+            <h3><i class="fas fa-baby"></i> Registro de Hijos menores de 5 años</h3>
             <div id="lista-hijos"></div>
             <button type="button" class="btn-add" onclick="agregarHijo()">
                 <i class="fas fa-plus"></i> Añadir Hijo
